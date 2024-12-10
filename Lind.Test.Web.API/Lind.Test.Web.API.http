@@ -1,0 +1,6 @@
+@Lind.Test.Web.API_HostAddress = http://localhost:5182
+
+GET {{Lind.Test.Web.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

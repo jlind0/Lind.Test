@@ -1,0 +1,61 @@
+﻿@page "/weather"
+@inject HttpClient Http
+@inject ILogger<Weather> Logger
+@using Lind.Test.FileExplorer.Core
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+@if (startLoad)
+{
+    <p>I am loading</p>
+}
+@if(error != null)
+{
+    <p>@error.Message</p>
+    <p>@error.StackTrace</p>
+}
+@if (folders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ul>
+        @foreach(var folder in folders)
+        {
+            <li>@folder.Name</li>
+            <ul>
+                @foreach(var file in folder.Files)
+                {
+                    <li>@file.Name</li>
+                }
+            </ul>
+        }
+    </ul>
+}
+
+@code {
+    private Folder[]? folders;
+    private bool startLoad = false;
+    private Exception? error;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            startLoad = true;
+            folders = await Http.GetFromJsonAsync<Folder[]>("https://localhost:7179/api/FileExplorer");
+        }
+        catch(Exception ex)
+        {
+            error = ex;
+            Logger.LogError(ex, ex.Message);
+        }
+        finally
+        {
+            startLoad = false;
+        }
+    }
+}
